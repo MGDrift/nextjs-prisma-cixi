@@ -1,0 +1,49 @@
+import { PrismaClient } from '@prisma/client'
+import { NextResponse } from 'next/server'
+const prisma = new PrismaClient()
+
+export async function GET() {
+  const products = await prisma.product.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: { category: { select: { id: true, name: true } } }
+  })
+  return NextResponse.json(products)
+}
+
+export async function POST(req) {
+  try {
+    const { name, price, categoryId } = await req.json()
+
+    if (!name?.trim()) {
+      return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 })
+    }
+
+    const data = {
+      name: name.trim(),
+    }
+
+    if (price !== undefined && price !== null && String(price) !== "") {
+      const numeric = Number(price)
+      if (Number.isNaN(numeric)) {
+        return NextResponse.json({ error: 'Precio inválido' }, { status: 400 })
+      }
+      data.price = numeric
+    }
+
+    if (categoryId) {
+      const idNum = Number(categoryId)
+      // valida que exista la categoría
+      const exists = await prisma.category.findUnique({ where: { id: idNum } })
+      if (!exists) {
+        return NextResponse.json({ error: 'Categoría no existe' }, { status: 400 })
+      }
+      data.categoryId = idNum
+    }
+
+    const product = await prisma.product.create({ data })
+    return NextResponse.json(product, { status: 201 })
+  } catch (e) {
+    console.error(e)
+    return NextResponse.json({ error: 'Error creando producto' }, { status: 500 })
+  }
+}
