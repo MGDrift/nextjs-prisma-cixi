@@ -11,6 +11,7 @@ export default function PricingPage() {
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newCategoryId, setNewCategoryId] = useState("");
+  const [newDescription, setNewDescription] = useState("");
 
   async function loadProducts() {
     const res = await fetch("/api/products", { cache: "no-store" });
@@ -33,6 +34,7 @@ export default function PricingPage() {
       name: newName,
       price: newPrice === "" ? undefined : Number(newPrice),
       categoryId: newCategoryId === "" ? undefined : Number(newCategoryId),
+      description: newDescription === "" ? undefined : newDescription,
     };
 
     const res = await fetch("/api/products", {
@@ -45,6 +47,7 @@ export default function PricingPage() {
       setNewName("");
       setNewPrice("");
       setNewCategoryId("");
+      setNewDescription("");
       await loadProducts();
       setMsg("Producto creado ✅");
       setTimeout(() => setMsg(null), 1200);
@@ -81,7 +84,10 @@ export default function PricingPage() {
       {msg && <p className="text-sm">{msg}</p>}
 
       {/* Crear producto */}
-      <form onSubmit={createProduct} className="grid gap-3 md:grid-cols-4 bg-white rounded-2xl p-4 ring-1 ring-slate-200">
+      <form
+        onSubmit={createProduct}
+        className="grid gap-3 md:grid-cols-4 bg-white rounded-2xl p-4 ring-1 ring-slate-200"
+      >
         <input
           className="border rounded-xl p-2 bg-white md:col-span-2"
           placeholder="Nombre del producto"
@@ -103,11 +109,21 @@ export default function PricingPage() {
         >
           <option value="">Sin categoría</option>
           {categories.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
           ))}
         </select>
+        <textarea
+          className="border rounded-xl p-2 bg-white md:col-span-4"
+          placeholder="Descripción del producto"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+        />
         <div className="md:col-span-4">
-          <button className="bg-black text-white rounded-xl px-4 h-10">Crear</button>
+          <button className="bg-black text-white rounded-xl px-4 h-10">
+            Crear
+          </button>
         </div>
       </form>
 
@@ -117,11 +133,17 @@ export default function PricingPage() {
       ) : (
         <ul className="space-y-3">
           {products.map((p) => (
-            <li key={p.id} className="rounded-2xl border border-slate-200 bg-white p-4 flex items-center gap-3">
+            <li
+              key={p.id}
+              className="rounded-2xl border border-slate-200 bg-white p-4 flex items-center gap-3"
+            >
               <div className="flex-1">
                 <div className="font-medium">{p.name}</div>
                 <div className="text-sm text-slate-500">
                   {p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}
+                </div>
+                <div className="text-sm text-slate-500">
+                  {p.description ? p.description : "Sin descripción"}
                 </div>
                 <div className="text-sm text-slate-500">
                   Precio actual: {p.price != null ? `$${p.price}` : "—"}
