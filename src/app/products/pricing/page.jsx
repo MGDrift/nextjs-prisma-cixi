@@ -80,7 +80,7 @@ export default function PricingPage() {
 
   return (
     <main className="max-w-3xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Productos y precios</h1>
+      <h1 className="text-2xl font-bold text-white">Productos y precios</h1>
       {msg && <p className="text-sm">{msg}</p>}
 
       {/* Crear producto */}
