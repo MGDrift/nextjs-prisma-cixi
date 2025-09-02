@@ -21,7 +21,7 @@ function LoginPage() {
         if (res.error) {
             setError(res.error)
         } else {
-            router.push('/dashprueba') 
+            router.push('/categories') 
             //aquí va la ruta del homepage en caso de que el usuario se logee correctamente
         }
     });
