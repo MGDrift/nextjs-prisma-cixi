@@ -124,7 +124,16 @@ export default function PricingPage() {
                   {p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}
                 </div>
                 <div className="text-sm text-slate-500">
-                  Precio actual: {p.price != null ? `$${p.price}` : "—"}
+                  Precio actual: {p.price != null
+                    ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 2 }).format(p.price)
+                    : "—"}
+                </div>
+                <div className="text-sm text-slate-500">
+                  {typeof p.stock === 'number'
+                    ? (p.stock > 0
+                        ? `Unidades disponibles: ${p.stock}`
+                        : 'Agotado')
+                    : 'Unidades: —'}
                 </div>
               </div>
               <input
