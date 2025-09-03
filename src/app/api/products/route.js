@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const { name, price, categoryId } = await req.json()
+    const { name, price, categoryId, description} = await req.json()
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 })
@@ -29,7 +29,10 @@ export async function POST(req) {
       }
       data.price = numeric
     }
-
+    if (description !== undefined && description !== null && description.trim() !== "") {
+      data.description = description.trim()
+    }
+    
     if (categoryId) {
       const idNum = Number(categoryId)
       // valida que exista la categoría
