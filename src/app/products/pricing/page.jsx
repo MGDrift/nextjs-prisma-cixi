@@ -7,19 +7,21 @@ export default function PricingPage() {
   const [editing, setEditing] = useState({});
   const [msg, setMsg] = useState(null);
 
-  // Form crear producto
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
   const [newCategoryId, setNewCategoryId] = useState("");
+  const [newDescription, setNewDescription] = useState("");
 
   async function loadProducts() {
     const res = await fetch("/api/products", { cache: "no-store" });
     setProducts(await res.json());
   }
+
   async function loadCategories() {
     const res = await fetch("/api/categories", { cache: "no-store" });
     setCategories(await res.json());
   }
+
   useEffect(() => {
     loadProducts();
     loadCategories();
@@ -33,6 +35,7 @@ export default function PricingPage() {
       name: newName,
       price: newPrice === "" ? undefined : Number(newPrice),
       categoryId: newCategoryId === "" ? undefined : Number(newCategoryId),
+      description: newDescription === "" ? undefined : newDescription,
     };
 
     const res = await fetch("/api/products", {
@@ -45,6 +48,7 @@ export default function PricingPage() {
       setNewName("");
       setNewPrice("");
       setNewCategoryId("");
+      setNewDescription("");
       await loadProducts();
       setMsg("Producto creado ✅");
       setTimeout(() => setMsg(null), 1200);
@@ -76,20 +80,23 @@ export default function PricingPage() {
   }
 
   return (
-    <main className="max-w-3xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-white">Productos y precios</h1>
-      {msg && <p className="text-sm">{msg}</p>}
+    <main className="min-h-screen p-6 space-y-6 bg-[#0f1f17]">
+      <h1 className="text-3xl font-bold text-white">Productos y precios</h1>
+      {msg && <p className="text-sm text-[#e8d7c9]">{msg}</p>}
 
-      {/* Crear producto */}
-      <form onSubmit={createProduct} className="grid gap-3 md:grid-cols-4 bg-white rounded-2xl p-4 ring-1 ring-slate-200">
+      <form
+        onSubmit={createProduct}
+        className="grid gap-3 md:grid-cols-4 bg-[#dd8f9a] rounded-2xl p-6 shadow-lg border border-[#dac2b2]"
+
+      >
         <input
-          className="border rounded-xl p-2 bg-white md:col-span-2"
+          className="border rounded-xl p-2 bg-white md:col-span-2 border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
           placeholder="Nombre del producto"
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
         />
         <input
-          className="border rounded-xl p-2 bg-white"
+          className="border rounded-xl p-2 bg-white border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
           placeholder="Precio (opcional)"
           type="number"
           step="0.01"
@@ -97,47 +104,53 @@ export default function PricingPage() {
           onChange={(e) => setNewPrice(e.target.value)}
         />
         <select
-          className="border rounded-xl p-2 bg-white"
+          className="border rounded-xl p-2 bg-white border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
           value={newCategoryId}
           onChange={(e) => setNewCategoryId(e.target.value)}
         >
           <option value="">Sin categoría</option>
           {categories.map((c) => (
-            <option key={c.id} value={c.id}>{c.name}</option>
+            <option key={c.id} value={c.id}>
+              {c.name}
+            </option>
           ))}
         </select>
+        <textarea
+          className="border rounded-xl p-2 bg-white md:col-span-4 border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
+          placeholder="Descripción del producto"
+          value={newDescription}
+          onChange={(e) => setNewDescription(e.target.value)}
+        />
         <div className="md:col-span-4">
-          <button className="bg-black text-white rounded-xl px-4 h-10">Crear</button>
+          <button className="bg-[#eca4b2] hover:bg-[#e5acbe] transition text-white rounded-xl px-6 h-11 shadow-md">
+            Crear
+          </button>
         </div>
       </form>
 
-      {/* Listado + edición de precio */}
       {products.length === 0 ? (
-        <p className="text-slate-600">No hay productos. Crea uno arriba.</p>
+        <p className="text-[#e8d7c9]">No hay productos. Crea uno arriba.</p>
       ) : (
         <ul className="space-y-3">
           {products.map((p) => (
-            <li key={p.id} className="rounded-2xl border border-slate-200 bg-white p-4 flex items-center gap-3">
+            <li
+              key={p.id}
+              className="rounded-2xl border border-[#dac2b2] bg-[#e8d7c9] p-4 flex items-center gap-3 shadow"
+            >
               <div className="flex-1">
-                <div className="font-medium">{p.name}</div>
-                <div className="text-sm text-slate-500">
+                <div className="font-semibold text-[#707b6d]">{p.name}</div>
+                <div className="text-sm text-[#707b6d]">
                   {p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}
                 </div>
-                <div className="text-sm text-slate-500">
-                  Precio actual: {p.price != null
-                    ? new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', minimumFractionDigits: 2 }).format(p.price)
-                    : "—"}
+                <div className="text-sm text-[#707b6d]">
+                  {p.description ? p.description : "Sin descripción"}
                 </div>
-                <div className="text-sm text-slate-500">
-                  {typeof p.stock === 'number'
-                    ? (p.stock > 0
-                        ? `Unidades disponibles: ${p.stock}`
-                        : 'Agotado')
-                    : 'Unidades: —'}
+                <div className="text-sm text-[#707b6d]">
+                  Precio actual: {p.price != null ? `$${p.price}` : "—"}
                 </div>
               </div>
               <input
-                className="border rounded-xl p-2 w-28"
+                className="border rounded-xl p-2 w-28 border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
                 type="number"
                 step="0.01"
                 placeholder={p.price != null ? String(p.price) : "0.00"}
@@ -148,7 +161,7 @@ export default function PricingPage() {
               />
               <button
                 onClick={() => savePrice(p.id)}
-                className="bg-black text-white rounded-xl h-10 px-3"
+                className="bg-[#e89090] hover:bg-[#a46c63] transition text-white rounded-xl h-10 px-3 shadow-md"
               >
                 Guardar
               </button>
