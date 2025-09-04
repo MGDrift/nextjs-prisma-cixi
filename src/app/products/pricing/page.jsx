@@ -80,98 +80,92 @@ export default function PricingPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 space-y-6 bg-[#611630]">
-      <h1 className="text-4xl text-center font-bold text-white"> PRODUCTOS CIXI</h1>
-      {msg && <p className="text-sm text-[#e8d7c9]">{msg}</p>}
+    <div className="h-[calc(100vh-7rem)] flex justify-center items-start pt-6">
+      <div className="w-2/5 space-y-4">
+        <h1 className="text-3xl text-white font-bold text-center mb-3">PRODUCTOS CIXI</h1>
+        {msg && <p className="text-xs text-slate-200 text-center">{msg}</p>}
 
-      <form
-        onSubmit={createProduct}
-        className="grid gap-3 md:grid-cols-4 bg-[#dd8fb3] w-1/2 mx-auto rounded-2xl p-3 shadow-lg border border-[#dac2b2]"
-
-
-      >
-        <input
-          className="border rounded-xl p-2 bg-white md:col-span-2 border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
-          placeholder="Nombre del producto"
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-        />
-        <input
-          className="border rounded-xl p-2 bg-white border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
-          placeholder="Precio (opcional)"
-          type="number"
-          step="0.01"
-          value={newPrice}
-          onChange={(e) => setNewPrice(e.target.value)}
-        />
-        <select
-          className="border rounded-xl p-2 bg-white border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
-          value={newCategoryId}
-          onChange={(e) => setNewCategoryId(e.target.value)}
+        <form
+          onSubmit={createProduct}
+          className="grid gap-3 bg-[#d9a5b2] rounded-xl p-5 shadow-lg border border-[#dac2b2]"
         >
-          <option value="">Sin categoría</option>
-          {categories.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-        <textarea
-          className="border rounded-xl p-2 bg-white md:col-span-4 border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
-          placeholder="Descripción del producto"
-          value={newDescription}
-          onChange={(e) => setNewDescription(e.target.value)}
-        />
-        <div className="md:col-span-4">
-          <button className="bg-[#623645] hover:bg-[#e5acbe]/80 transition text-white rounded-xl px-6 h-11 shadow-md">
-            Crear
-          </button>
-        </div>
-      </form>
+          <input
+            className="border rounded p-2 bg-[#f0cdd8] text-slate-900 md:col-span-2 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
+            placeholder="Nombre del producto"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <input
+            className="border rounded p-2 bg-[#f0cdd8] text-slate-900 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
+            placeholder="Precio (opcional)"
+            type="number"
+            step="0.01"
+            value={newPrice}
+            onChange={(e) => setNewPrice(e.target.value)}
+          />
+          <select
+            className="border rounded p-2 bg-[#f0cdd8] text-slate-900 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
+            value={newCategoryId}
+            onChange={(e) => setNewCategoryId(e.target.value)}
+          >
+            <option value="">Sin categoría</option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <textarea
+            className="border rounded p-2 bg-[#f0cdd8] md:col-span-4 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
+            placeholder="Descripción del producto"
+            value={newDescription}
+            onChange={(e) => setNewDescription(e.target.value)}
+          />
+          <div className="md:col-span-4">
+            <button className="w-1/4 block mx-auto bg-[#623645] hover:bg-[#7a3b5a] text-white font-bold p-2 rounded-lg">
+              Crear
+            </button>
+          </div>
+        </form>
 
-      {products.length === 0 ? (
-        <p className="text-[#eb73a3]">No hay productos. Crea uno arriba.</p>
-      ) : (
-        <ul className="space-y-5">
-          {products.map((p) => (
-            <li
-              key={p.id}
-              className="rounded-2xl border border-[#390b33] mx-auto bg-[#e4cddd]/90 p-2 flex items-center gap-2 shadow w-2/3"
-
-
-            >
-              <div className="flex-1">
-                <div className="font-semibold text-[#707b6d]">{p.name}</div>
-                <div className="text-sm text-[#707b6d]">
-                  {p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}
-                </div>
-                <div className="text-sm text-[#707b6d]">
-                  {p.description ? p.description : "Sin descripción"}
-                </div>
-                <div className="text-sm text-[#707b6d]">
-                  Precio actual: {p.price != null ? `$${p.price}` : "—"}
-                </div>
-              </div>
-              <input
-                className="border rounded-xl p-2 w-28 border-[#dac2b2] focus:ring-2 focus:ring-[#bf897f] outline-none"
-                type="number"
-                step="0.01"
-                placeholder={p.price != null ? String(p.price) : "0.00"}
-                value={editing[p.id] ?? ""}
-                onChange={(e) =>
-                  setEditing({ ...editing, [p.id]: e.target.value })
-                }
-              />
-              <button
-                onClick={() => savePrice(p.id)}
-                className="hover:bg-[#b78093] bg-[#623645] transition text-white rounded-xl h-10 px-3 shadow-md"
+        {products.length === 0 ? (
+          <p className="text-xs text-slate-200 text-center mt-2">No hay productos. Crea uno arriba.</p>
+        ) : (
+          <ul className="space-y-3 mt-2">
+            {products.map((p) => (
+              <li
+                key={p.id}
+                className="rounded-xl border border-[#dac2b2] bg-[#f0cdd8] p-3 flex items-center justify-between shadow text-slate-900"
               >
-                Guardar
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+                <div className="flex-1 space-y-1">
+                  <div className="font-semibold text-white">{p.name}</div>
+                  <div className="text-xs">{p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}</div>
+                  <div className="text-xs">{p.description ? p.description : "Sin descripción"}</div>
+                  <div className="text-xs">Precio actual: {p.price != null ? `$${p.price}` : "—"}</div>
+                </div>
+                <div className="flex gap-2 items-center ml-4">
+                  <input
+                    className="border rounded p-2 w-24 text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
+                    type="number"
+                    step="0.01"
+                    placeholder={p.price != null ? String(p.price) : "0.00"}
+                    value={editing[p.id] ?? ""}
+                    onChange={(e) =>
+                      setEditing({ ...editing, [p.id]: e.target.value })
+                    }
+                  />
+                  <button
+                    onClick={() => savePrice(p.id)}
+                    className="bg-[#623645] hover:bg-[#7a3b5a] text-white rounded-lg px-3 font-bold text-sm"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
