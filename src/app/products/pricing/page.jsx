@@ -6,7 +6,8 @@ export default function PricingPage() {
   const [categories, setCategories] = useState([]);
   const [editing, setEditing] = useState({});
   const [msg, setMsg] = useState(null);
-  const [newQuantity, setNewQuantity] = useState("");
+  const [newStock, setNewStock] = useState(""); 
+ 
 
 
   const [newName, setNewName] = useState("");
@@ -33,11 +34,17 @@ export default function PricingPage() {
     e.preventDefault();
     setMsg(null);
 
+    if (newStock !== "" && Number(newStock) < 0) {
+      setMsg("Stock no puede ser negativo");
+      return;
+    }
+
     const body = {
       name: newName,
       price: newPrice === "" ? undefined : Number(newPrice),
       categoryId: newCategoryId === "" ? undefined : Number(newCategoryId),
       description: newDescription === "" ? undefined : newDescription,
+      stock: newStock === "" ? undefined : Number(newStock), 
     };
 
     const res = await fetch("/api/products", {
@@ -51,6 +58,8 @@ export default function PricingPage() {
       setNewPrice("");
       setNewCategoryId("");
       setNewDescription("");
+      setNewStock("");
+
       await loadProducts();
       setMsg("Producto creado ✅");
       setTimeout(() => setMsg(null), 1200);
@@ -110,8 +119,8 @@ export default function PricingPage() {
             placeholder="Cantidad (opcional)"
             type="number"
             step="1"
-            value={newQuantity}
-            onChange={(e) => setNewQuantity(e.target.value)}
+            value={newStock}
+            onChange={(e) => setNewStock(e.target.value)}
           />
           <select
             className="border rounded p-2 bg-[#f0cdd8] text-slate-900 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
@@ -152,6 +161,8 @@ export default function PricingPage() {
                   <div className="text-xs">{p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}</div>
                   <div className="text-xs">{p.description ? p.description : "Sin descripción"}</div>
                   <div className="text-xs">Precio actual: {p.price != null ? `$${p.price}` : "—"}</div>
+                  <div className="text-xs">Stock: {p.stock != null ? p.stock : 0}</div>
+
                 </div>
                 <div className="flex gap-2 items-center ml-4">
                   <input

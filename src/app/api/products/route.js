@@ -12,7 +12,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const { name, price, categoryId, description} = await req.json()
+    const { name, price, categoryId, description, stock } = await req.json()
 
     if (!name?.trim()) {
       return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 })
@@ -41,6 +41,13 @@ export async function POST(req) {
         return NextResponse.json({ error: 'Categoría no existe' }, { status: 400 })
       }
       data.categoryId = idNum
+    }
+
+    if (stock !== undefined && stock !== null && String(stock) !== "") {
+      const numericStock = Number(stock)
+      if (!Number.isNaN(numericStock) && numericStock >= 0) {
+        data.stock = numericStock
+      }
     }
 
     const product = await prisma.product.create({ data })
