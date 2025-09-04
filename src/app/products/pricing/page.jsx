@@ -6,6 +6,8 @@ export default function PricingPage() {
   const [categories, setCategories] = useState([]);
   const [editing, setEditing] = useState({});
   const [msg, setMsg] = useState(null);
+  const [newQuantity, setNewQuantity] = useState("");
+
 
   const [newName, setNewName] = useState("");
   const [newPrice, setNewPrice] = useState("");
@@ -80,9 +82,9 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#b48696] flex justify-center items-start pt-6">
-      <div className="w-2/5 space-y-4">
-        <h1 className="text-3xl text-white font-bold text-center mb-3">PRODUCTOS CIXI</h1>
+    <div className="min-h-screen bg-[#b48696] flex justify-center items-start pt-6" >
+      <div className="w-3/5 space-y-">
+        <h1 className="text-3xl text-white font-bold text-center mt-10 mb-3">PRODUCTOS</h1>
         {msg && <p className="text-xs text-slate-200 text-center">{msg}</p>}
 
         <form
@@ -102,6 +104,14 @@ export default function PricingPage() {
             step="0.01"
             value={newPrice}
             onChange={(e) => setNewPrice(e.target.value)}
+          />
+          <input
+            className="border rounded p-2 bg-[#f0cdd8] text-slate-900 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
+            placeholder="Cantidad (opcional)"
+            type="number"
+            step="1"
+            value={newQuantity}
+            onChange={(e) => setNewQuantity(e.target.value)}
           />
           <select
             className="border rounded p-2 bg-[#f0cdd8] text-slate-900 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
