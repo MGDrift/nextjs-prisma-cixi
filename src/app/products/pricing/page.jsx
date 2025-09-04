@@ -93,12 +93,13 @@ export default function PricingPage() {
   return (
     <div className="min-h-screen bg-[#b48696] flex justify-center items-start pt-6" >
       <div className="w-3/5 space-y-">
-        <h1 className="text-3xl text-white font-bold text-center mt-10 mb-3">PRODUCTOS</h1>
+        <h1 className="text-3xl text-white font-bold text-center mt-5 mb-3">PRODUCTOS</h1>
         {msg && <p className="text-xs text-slate-200 text-center">{msg}</p>}
 
         <form
           onSubmit={createProduct}
-          className="grid gap-3 bg-[#d9a5b2] rounded-xl p-5 shadow-lg border border-[#dac2b2]"
+          className="grid gap-3 bg-[#d9a5b2] rounded-xl w-2/3 p-5 h-60 shadow-lg border border-[#dac2b2] max-h-[230px] mx-auto mb-10"
+
         >
           <input
             className="border rounded p-2 bg-[#f0cdd8] text-slate-900 md:col-span-2 w-full text-sm focus:ring-2 focus:ring-[#bf897f] outline-none"
@@ -154,7 +155,7 @@ export default function PricingPage() {
             {products.map((p) => (
               <li
                 key={p.id}
-                className="rounded-xl border border-[#dac2b2] bg-[#f0cdd8] p-3 flex items-center justify-between shadow text-slate-900"
+                className="rounded-xl border border-[#dac2b2] bg-[#f0cdd8] p-3 flex items-center justify-between shadow text-slate-900 h-26 overflow-hidden"
               >
                 <div className="flex-1 space-y-1">
                   <div className="font-semibold text-white">{p.name}</div>
