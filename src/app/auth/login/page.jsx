@@ -10,8 +10,6 @@ function LoginPage() {
     const [error, setError] = useState(null) 
 
     const onSubmit = handleSubmit(async data => {
-        console.log(data)
-
         const res = await signIn("credentials", {
             email: data.email,
             password: data.password,
@@ -21,25 +19,23 @@ function LoginPage() {
         if (res.error) {
             setError(res.error)
         } else {
-            router.push('/categories') 
-            //aquí va la ruta del homepage en caso de que el usuario se logee correctamente
+            router.push('/categories')
         }
     });
 
     return (
         <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-            <form onSubmit={onSubmit} className="w-1/4">
+            <form onSubmit={onSubmit} className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg">
                 
                 {error &&(
                     <p className="bg-red-500 text-lg text-white p-3 rounded mb-2">{error}</p>
                 )}
                 
-                <h1 className="text-slate-200 font-bold text-5xl mb-4">
+                <h1 className="text-slate-200 font-bold text-4xl mb-3 text-center">
                     Inicio de sesión
                 </h1>
-                <label htmlFor="email" className="text-slate-500 mb-2 block text-sm"> 
-                    Nombre de Usuario
-                </label>
+
+                <label className="text-slate-500 mb-1 block text-xs">Nombre de Usuario</label>
                 <input 
                     type="email" 
                     {...register("email", {
@@ -48,42 +44,29 @@ function LoginPage() {
                             message: "Email requerido"
                         }
                     })}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-2 rounded mb-2 bg-[#f0cdd8] text-slate-900 w-full"
                     placeholder="user@gmail.com"
                 />
-                 {
-                    errors.email && (
-                        <span
-                            className="text-red-500 text-sm"
-                        >{errors.email.message}</span>
-                    )
-                }
+                {errors.email && <span className="text-red-500 text-xs">{errors.email.message}</span>}
 
-                <label htmlFor="password" className="text-slate-500 mb-2 block text-sm"> 
-                    Nombre de Usuario
-                </label>
+                <label className="text-slate-500 mb-1 block text-xs">Contraseña</label>
                 <input 
                     type="password" 
                     {...register("password", {
                         required: {
                             value: true,
-                            message: "Contraseña requerido"
+                            message: "Contraseña requerida"
                         }
                     })}
-                    className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+                    className="p-2 rounded mb-3 bg-[#f0cdd8] text-slate-900 w-full"
                     placeholder="******"
                 />
-                {
-                    errors.password && (
-                        <span
-                            className="text-red-500 text-sm"
-                        >{errors.password.message}</span>
-                    )
-                }
+                {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
 
                 <button
-                    className="w-full bg-blue-500 text-white p-3 rounded-lg mt-2" 
-                    >Iniciar Sesión
+                    className="w-1/2 block mx-auto mt-3 bg-[#623645] text-white font-bold p-2 rounded-lg"
+                >
+                    Iniciar Sesión
                 </button>
 
             </form>
