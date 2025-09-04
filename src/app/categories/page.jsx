@@ -14,6 +14,7 @@ export default function CategoriesPage() {
     setList(data);
     setLoading(false);
   }
+
   useEffect(() => { load(); }, []);
 
   async function createCategory(e) {
@@ -35,33 +36,36 @@ export default function CategoriesPage() {
   }
 
   return (
-    <main className="max-w-xl mx-auto p-6 space-y-6 bg-slate-900 min-h-screen text-white">
-      <h1 className="text-2xl font-bold">Categorías</h1>
+    <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
+      <form className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg" onSubmit={createCategory}>
+        <h1 className="text-white font-bold text-3xl mb-3 text-center">Categorías</h1>
 
-      <form onSubmit={createCategory} className="flex gap-2">
         <input
-          className="border rounded p-2 flex-1 bg-slate-800 text-white placeholder-gray-400"
+          className="border rounded p-2 mb-2 w-full bg-[#f0cdd8] text-slate-900 placeholder-gray-500 text-sm"
           placeholder="Nombre de la categoría"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="bg-blue-600 hover:bg-blue-700 text-white rounded px-4">
+        <button className="w-1/2 block mx-auto mt-3 bg-[#623645] text-white font-bold p-2 rounded-lg text-sm">
           Crear
         </button>
-      </form>
 
-      {msg && <p className="text-sm text-gray-300">{msg}</p>}
-      {loading ? (
-        <p className="text-gray-400">Cargando...</p>
-      ) : list.length === 0 ? (
-        <p className="text-sm text-gray-400">No hay categorías aún.</p>
-      ) : (
-        <ul className="list-disc pl-6 space-y-1">
-          {list.map((c) => (
-            <li key={c.id} className="text-white">{c.name}</li>
-          ))}
-        </ul>
-      )}
-    </main>
+        {msg && <p className="text-xs text-slate-700 mt-2">{msg}</p>}
+
+        {!loading && list.length > 0 && (
+          <ul className="list-disc pl-5 mt-2 text-sm text-slate-900 space-y-1">
+            {list.map((c) => (
+              <li key={c.id}>{c.name}</li>
+            ))}
+          </ul>
+        )}
+
+        {!loading && list.length === 0 && (
+          <p className="text-xs text-slate-700 mt-2">No hay categorías aún.</p>
+        )}
+
+        {loading && <p className="text-slate-600 text-sm mt-2">Cargando...</p>}
+      </form>
+    </div>
   );
 }
