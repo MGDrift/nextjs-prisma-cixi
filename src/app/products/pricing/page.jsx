@@ -80,13 +80,14 @@ export default function PricingPage() {
   }
 
   return (
-    <main className="min-h-screen p-6 space-y-6 bg-[#0f1f17]">
-      <h1 className="text-3xl font-bold text-white">Productos y precios</h1>
+    <main className="min-h-screen p-6 space-y-6 bg-[#611630]">
+      <h1 className="text-4xl text-center font-bold text-white"> PRODUCTOS CIXI</h1>
       {msg && <p className="text-sm text-[#e8d7c9]">{msg}</p>}
 
       <form
         onSubmit={createProduct}
-        className="grid gap-3 md:grid-cols-4 bg-[#dd8f9a] rounded-2xl p-6 shadow-lg border border-[#dac2b2]"
+        className="grid gap-3 md:grid-cols-4 bg-[#dd8fb3] w-1/2 mx-auto rounded-2xl p-3 shadow-lg border border-[#dac2b2]"
+
 
       >
         <input
@@ -122,20 +123,22 @@ export default function PricingPage() {
           onChange={(e) => setNewDescription(e.target.value)}
         />
         <div className="md:col-span-4">
-          <button className="bg-[#eca4b2] hover:bg-[#e5acbe] transition text-white rounded-xl px-6 h-11 shadow-md">
+          <button className="bg-[#623645] hover:bg-[#e5acbe]/80 transition text-white rounded-xl px-6 h-11 shadow-md">
             Crear
           </button>
         </div>
       </form>
 
       {products.length === 0 ? (
-        <p className="text-[#e8d7c9]">No hay productos. Crea uno arriba.</p>
+        <p className="text-[#eb73a3]">No hay productos. Crea uno arriba.</p>
       ) : (
-        <ul className="space-y-3">
+        <ul className="space-y-5">
           {products.map((p) => (
             <li
               key={p.id}
-              className="rounded-2xl border border-[#dac2b2] bg-[#e8d7c9] p-4 flex items-center gap-3 shadow"
+              className="rounded-2xl border border-[#390b33] mx-auto bg-[#e4cddd]/90 p-2 flex items-center gap-2 shadow w-2/3"
+
+
             >
               <div className="flex-1">
                 <div className="font-semibold text-[#707b6d]">{p.name}</div>
@@ -161,7 +164,7 @@ export default function PricingPage() {
               />
               <button
                 onClick={() => savePrice(p.id)}
-                className="bg-[#e89090] hover:bg-[#a46c63] transition text-white rounded-xl h-10 px-3 shadow-md"
+                className="hover:bg-[#b78093] bg-[#623645] transition text-white rounded-xl h-10 px-3 shadow-md"
               >
                 Guardar
               </button>
