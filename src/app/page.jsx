@@ -24,7 +24,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-[#b48696]">
       {/* Navbar */}
       <nav className="bg-[#d9a5b2] shadow-lg py-4 px-6 flex justify-between items-center">
-        <h1 className="text-white text-2xl font-bold">COMMERCE CIXI ♡</h1>
+        <h1 className="text-white text-2xl font-bold">ECOMMERCE CIXI ♡</h1>
         <div className="flex gap-4">
           <a href="#" className="text-white hover:text-[#623645] font-semibold">Home</a>
           <a href="#" className="text-white hover:text-[#623645] font-semibold">Productos</a>
