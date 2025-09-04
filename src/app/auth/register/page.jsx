@@ -31,8 +31,9 @@ function RegisterPage() {
     });
 
     return (
-        <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-            <form onSubmit={onSubmit} className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg">
+        <div className="min-h-screen w-full flex justify-center items-start bg-[#b37c8e]">
+
+            <form onSubmit={onSubmit} className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg mt-20">
                 <h1 className="text-slate-200 font-bold text-4xl mb-3 text-center">Registro</h1>
 
                 <label className="text-slate-500 mb-1 block text-xs">Nombre de Usuario</label>
@@ -71,7 +72,7 @@ function RegisterPage() {
                 />
                 {errors.confirmPassword && <span className="text-red-500 text-xs">{errors.confirmPassword.message}</span>}
 
-                <button className="w-1/2 block mx-auto mt-3 bg-[#623645] text-white font-bold p-2 rounded-lg">
+                <button className="w-1/2 block mx-auto mt-3 bg-[#623645] hover:bg-[#d4839e] text-white font-bold p-2 rounded-lg">
                     Registrarse
                 </button>
             </form>

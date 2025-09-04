@@ -80,7 +80,7 @@ export default function PricingPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-7rem)] flex justify-center items-start pt-6">
+    <div className="min-h-screen bg-[#b48696] flex justify-center items-start pt-6">
       <div className="w-2/5 space-y-4">
         <h1 className="text-3xl text-white font-bold text-center mb-3">PRODUCTOS CIXI</h1>
         {msg && <p className="text-xs text-slate-200 text-center">{msg}</p>}

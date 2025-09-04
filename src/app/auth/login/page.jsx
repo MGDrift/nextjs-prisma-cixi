@@ -24,8 +24,8 @@ function LoginPage() {
     });
 
     return (
-        <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-            <form onSubmit={onSubmit} className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg">
+        <div className="min-h-screen w-full flex justify-center items-start bg-[#b37c8e]">
+            <form onSubmit={onSubmit} className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg mt-20">
                 
                 {error &&(
                     <p className="bg-red-500 text-lg text-white p-3 rounded mb-2">{error}</p>
@@ -64,7 +64,7 @@ function LoginPage() {
                 {errors.password && <span className="text-red-500 text-xs">{errors.password.message}</span>}
 
                 <button
-                    className="w-1/2 block mx-auto mt-3 bg-[#623645] text-white font-bold p-2 rounded-lg"
+                    className="w-1/2 block mx-auto mt-3 bg-[#623645] hover:bg-[#d4839e] text-white font-bold p-2 rounded-lg"
                 >
                     Iniciar Sesión
                 </button>

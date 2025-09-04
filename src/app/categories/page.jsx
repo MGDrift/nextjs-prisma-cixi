@@ -36,8 +36,10 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-      <form className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg" onSubmit={createCategory}>
+    <div className="min-h-screen w-full flex justify-center items-start bg-[#b37c8e]">
+
+
+      <form className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg mt-30" onSubmit={createCategory}>
         <h1 className="text-white font-bold text-3xl mb-3 text-center">Categorías</h1>
 
         <input
