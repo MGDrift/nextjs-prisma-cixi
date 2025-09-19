@@ -35,7 +35,6 @@ export async function POST(req) {
     
     if (categoryId) {
       const idNum = Number(categoryId)
-      // valida que exista la categoría
       const exists = await prisma.category.findUnique({ where: { id: idNum } })
       if (!exists) {
         return NextResponse.json({ error: 'Categoría no existe' }, { status: 400 })

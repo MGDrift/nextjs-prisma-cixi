@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { addToCart } from "../libs/cart"; 
 
 export default function HomePage() {
   const [products, setProducts] = useState([]);
@@ -54,6 +55,30 @@ export default function HomePage() {
                     <div className="text-xs">{p.description ? p.description : "Sin descripción"}</div>
                     <div className="text-xs">Precio: {p.price != null ? `$${p.price}` : "—"}</div>
                     <div className="text-xs">Stock: {p.stock != null ? p.stock : 0}</div>
+                  </div>
+
+                  {/* Botón Agregar al carrito */}
+                  <div className="mt-3 md:mt-0 flex items-center gap-3">
+                    <button
+                      disabled={p.stock <= 0}
+                      onClick={() => {
+                        const r = addToCart({
+                          id: p.id,
+                          name: p.name,
+                          price: p.price,
+                          stock: p.stock,
+                        });
+                        if (!r.ok) {
+                          if (r.reason === "no-stock") alert("Sin stock disponible");
+                          if (r.reason === "stock-limit") alert("Alcanzaste el stock disponible");
+                          return;
+                        }
+                        alert("Agregado al carrito");
+                      }}
+                      className="bg-[#623645] text-white rounded px-3 py-1 text-xs font-semibold shadow disabled:opacity-60"
+                    >
+                      Agregar al carrito
+                    </button>
                   </div>
                 </li>
               ))}

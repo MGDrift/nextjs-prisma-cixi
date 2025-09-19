@@ -1,9 +1,7 @@
-// src/app/api/products/[id]/route.js
 import { NextResponse } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 const prisma = new PrismaClient()
 
-// PATCH /api/products/:id  (actualiza precio y/o stock)
 export async function PATCH(req, { params }) {
   try {
     const { id } = params
@@ -18,7 +16,7 @@ export async function PATCH(req, { params }) {
     }
 
     const updated = await prisma.product.update({
-      where: { id: Number(id) }, // si tu id es string/uuid, quita Number()
+      where: { id: Number(id) }, 
       data
     })
     return NextResponse.json(updated)
@@ -27,12 +25,11 @@ export async function PATCH(req, { params }) {
   }
 }
 
-// DELETE /api/products/:id  (elimina producto)
 export async function DELETE(_req, { params }) {
   try {
     const { id } = params
     await prisma.product.delete({
-      where: { id: Number(id) } // si es uuid, quita Number()
+      where: { id: Number(id) } 
     })
     return NextResponse.json({ ok: true })
   } catch (e) {
