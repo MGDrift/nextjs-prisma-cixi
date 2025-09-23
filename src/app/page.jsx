@@ -5,6 +5,7 @@ import { addToCart } from "../libs/cart";
 export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [ratings, setRatings] = useState({});
 
   async function loadProducts() {
     const res = await fetch("/api/products", { cache: "no-store" });
@@ -21,9 +22,21 @@ export default function HomePage() {
     loadCategories();
   }, []);
 
+  const handleRate = async (productId, value) => {
+    setRatings((prev) => ({ ...prev, [productId]: value }));
+    try {
+      await fetch("/api/ratings/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, userId: 1, value })
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#b48696]">
-      {/* Navbar */}
       <nav className="bg-[#d9a5b2] shadow-lg py-4 px-6 flex justify-between items-center">
         <h1 className="text-white text-2xl font-bold">ECOMMERCE CIXI ♡</h1>
         <div className="flex gap-4">
@@ -33,7 +46,6 @@ export default function HomePage() {
         </div>
       </nav>
 
-      {/* Contenido */}
       <div className="flex justify-center pt-10 px-4">
         <div className="w-3/5 space-y-6">
           <h2 className="text-3xl text-white font-bold text-center">Nuestros Productos</h2>
@@ -55,9 +67,21 @@ export default function HomePage() {
                     <div className="text-xs">{p.description ? p.description : "Sin descripción"}</div>
                     <div className="text-xs">Precio: {p.price != null ? `$${p.price}` : "—"}</div>
                     <div className="text-xs">Stock: {p.stock != null ? p.stock : 0}</div>
+                    <div className="flex gap-1 mt-2">
+                      {[1,2,3,4,5].map((star) => (
+                        <button
+                          key={star}
+                          onClick={() => handleRate(p.id, star)}
+                          className={`text-xl ${ratings[p.id] >= star ? "text-yellow-400" : "text-gray-400"}`}
+                        >
+                          ★
+                        </button>
+                      ))}
+                    </div>
+                   
+
                   </div>
 
-                  {/* Botón Agregar al carrito */}
                   <div className="mt-3 md:mt-0 flex items-center gap-3">
                     <button
                       disabled={p.stock <= 0}
