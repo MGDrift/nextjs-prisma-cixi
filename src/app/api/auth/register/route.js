@@ -36,11 +36,22 @@ export async function POST(request) {
     }
 
     const hashedPassword = await bcrypt.hash(data.password, 10)
+
+     // Validar creación de admin (opcional)
+    let role = "user"; // por defecto
+    if (data.role === "admin") {
+      if (data.secret !== process.env.ADMIN_SECRET) {
+        return NextResponse.json({ message: "No autorizado para crear admin" }, { status: 403 });
+      }
+      role = "admin";
+    }
+
     const newUser = await db.user.create({
       data: {
         username: data.username,
         email: data.email,
-        password: hashedPassword
+        password: hashedPassword,
+        role
       }
     });
 

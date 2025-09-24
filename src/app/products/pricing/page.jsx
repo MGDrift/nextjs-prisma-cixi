@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";   // 👈 NUEVO
 
 function CreateProductForm({ categories, onCreated }) {
   const [name, setName] = useState("");
@@ -98,7 +99,7 @@ function CreateProductForm({ categories, onCreated }) {
   );
 }
 
-function ProductRow({ p, onChanged }) {
+function ProductRow({ p, onChanged, isAdmin  }) {
   const [price, setPrice] = useState(p.price ?? 0);
   const [stock, setStock] = useState(p.stock ?? 0);
   const [loading, setLoading] = useState(false);
@@ -138,41 +139,46 @@ function ProductRow({ p, onChanged }) {
         <div className="text-xs">Stock: {p.stock != null ? p.stock : 0}</div>
       </div>
 
-      <div className="mt-3 md:mt-0 flex items-center gap-3">
-        <input
-          type="number"
-          value={price}
-          onChange={(e) => setPrice(Number(e.target.value))}
-          className="rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
-        />
-        <input
-          type="number"
-          min={0}
-          value={stock}
-          onChange={(e) => setStock(Number(e.target.value))}
-          placeholder="Cantidad"
-          className="rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
-        />
-        <button
-          onClick={save}
-          disabled={loading}
-          className="bg-[#623645] text-white rounded px-3 py-1 text-xs font-semibold shadow disabled:opacity-60"
-        >
-          {loading ? "Guardando..." : "Guardar"}
-        </button>
-        <button
-          onClick={remove}
-          disabled={loading}
-          className="bg-[#623645] text-white rounded px-3 py-1 text-xs font-semibold shadow disabled:opacity-60"
-        >
-          {loading ? "Eliminando..." : "Eliminar"}
-        </button>
-      </div>
+      {isAdmin && (
+        <div className="mt-3 md:mt-0 flex items-center gap-3">
+          <input
+            type="number"
+            value={price}
+            onChange={(e) => setPrice(Number(e.target.value))}
+            className="rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
+          />
+          <input
+            type="number"
+            min={0}
+            value={stock}
+            onChange={(e) => setStock(Number(e.target.value))}
+            placeholder="Cantidad"
+            className="rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
+          />
+          <button
+            onClick={save}
+            disabled={loading}
+            className="bg-[#623645] text-white rounded px-3 py-1 text-xs font-semibold shadow disabled:opacity-60"
+          >
+            {loading ? "Guardando..." : "Guardar"}
+          </button>
+          <button
+            onClick={remove}
+            disabled={loading}
+            className="bg-[#623645] text-white rounded px-3 py-1 text-xs font-semibold shadow disabled:opacity-60"
+          >
+            {loading ? "Eliminando..." : "Eliminar"}
+          </button>
+        </div>
+      )}
     </li>
   );
 }
 
 export default function PricingPage() {
+  const { data: session } = useSession();      // 👈 NUEVO
+  const isAdmin = session?.user?.role === "admin"; // 👈 NUEVO
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
@@ -212,8 +218,10 @@ export default function PricingPage() {
         <div className="w-3/5 space-y-6">
           <h2 className="text-3xl text-white font-bold text-center">Gestionar productos</h2>
 
-          {/* Formulario de creación */}
-          <CreateProductForm categories={categories} onCreated={loadProducts} />
+          {/* Formulario de creación: solo admin */}
+          {isAdmin && (
+            <CreateProductForm categories={categories} onCreated={loadProducts} />
+          )}
 
           {/* Lista editable */}
           {products.length === 0 ? (
@@ -221,7 +229,7 @@ export default function PricingPage() {
           ) : (
             <ul className="space-y-3">
               {products.map((p) => (
-                <ProductRow key={p.id} p={p} onChanged={loadProducts} />
+                <ProductRow key={p.id} p={p} onChanged={loadProducts} isAdmin={isAdmin} />
               ))}
             </ul>
           )}
