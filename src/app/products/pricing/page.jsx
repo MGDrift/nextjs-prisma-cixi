@@ -9,19 +9,48 @@ function CreateProductForm({ categories, onCreated }) {
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+
+  // Maneja la selección de imagen, genera preview y sube a Cloudinary
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setImageFile(file);
+
+    // Preview local
+    const reader = new FileReader();
+    reader.onloadend = () => setImagePreview(reader.result);
+    reader.readAsDataURL(file);
+
+    // Subida a Cloudinary
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", "products_preset"); // reemplaza con tu preset
+    const res = await fetch("https://api.cloudinary.com/v1_1/dftkpzy1p/image/upload", {
+      method: "POST",
+      body: formData,
+    });
+    const data = await res.json();
+    setUploadedImageUrl(data.secure_url); // guardamos la URL
+  };
 
   const submit = async (e) => {
     e.preventDefault();
     setLoading(true);
+
     try {
       const body = {
         name: name.trim(),
         description: description.trim() || null,
         price: price === "" ? null : Number(price),
         stock: stock === "" ? 0 : Number(stock),
+        categoryId: categoryId !== "" ? Number(categoryId) : null,
+        image: uploadedImageUrl, // ✅ enviamos la URL subida
       };
-      if (categoryId !== "") body.categoryId = Number(categoryId); 
 
       await fetch("/api/products", {
         method: "POST",
@@ -29,11 +58,16 @@ function CreateProductForm({ categories, onCreated }) {
         body: JSON.stringify(body),
       });
 
+      // Resetear formulario
       setName("");
       setDescription("");
       setPrice("");
       setStock("");
       setCategoryId("");
+      setImageFile(null);
+      setImagePreview(null);
+      setUploadedImageUrl(null);
+
       await onCreated();
     } finally {
       setLoading(false);
@@ -78,6 +112,23 @@ function CreateProductForm({ categories, onCreated }) {
           placeholder="Cantidad"
           className="rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
         />
+
+        {/* Input para imagen */}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          className="w-full rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
+        />
+
+        {/* Vista previa */}
+        {imagePreview && (
+          <img
+            src={imagePreview}
+            alt="Vista previa"
+            className="w-32 h-32 object-cover rounded shadow mt-2"
+          />
+        )}
       </div>
 
       <textarea
@@ -132,6 +183,15 @@ function ProductRow({ p, onChanged, isAdmin  }) {
   return (
     <li className="rounded-xl border border-[#dac2b2] bg-[#f0cdd8] p-4 flex flex-col md:flex-row justify-between shadow text-slate-900">
       <div className="flex-1 space-y-1">
+        {/* Imagen del producto */}
+        {p.image && (
+          <img
+            src={p.image}
+            alt={p.name}
+            className="w-32 h-32 object-cover rounded shadow mb-2"
+          />
+        )}
+
         <div className="font-semibold text-[#623645] text-lg">{p.name}</div>
         <div className="text-xs">{p.category ? `Categoría: ${p.category.name}` : "Sin categoría"}</div>
         <div className="text-xs">{p.description || "Sin descripción"}</div>

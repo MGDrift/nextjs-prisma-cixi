@@ -36,6 +36,7 @@ model Product {
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
   ratings     Rating[]
+  image       String? 
 }
 
 model Rating {
