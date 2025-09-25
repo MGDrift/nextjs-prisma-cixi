@@ -278,48 +278,22 @@ export default function PricingPage() {
       <nav className="bg-[#d9a5b2] shadow-lg py-4 px-6 flex justify-between items-center">
         <h1 className="text-white text-2xl font-bold">ECOMMERCE CIXI ♡</h1>
         <div className="flex gap-4 items-center">
-          <a href="/" className="text-white hover:text-[#623645] font-semibold">Home</a>
-          <a href="/products/pricing" className="text-white hover:text-[#623645] font-semibold">Productos</a>
+          {!isAdmin && (
+            <>
+              <a href="/" className="text-white hover:text-[#623645] font-semibold">Home</a>
+              <a href="/cart" className="text-white hover:text-[#623645] font-semibold">Carrito</a>
+              <a href="/products/pricing" className="text-white hover:text-[#623645] font-semibold">Productos</a>
+            </>
+          )}
 
           {/* Botón Categorías solo para admin en navbar */}
           {isAdmin && (
-            <div className="relative">
-              <button
-                onClick={() => setShowCategories(!showCategories)}
-                className="text-white hover:text-[#623645] font-semibold"
-              >
-                Categorías ▾ 
-              </button>
-              {showCategories && (
-                <ul className="absolute mt-8 right-0 bg-[#d9a5b2] border border-[#623645] rounded shadow-md max-h-40 overflow-auto z-50 w-32">
-                  <li
-                    onClick={() => {
-                      setSelectedCategoryId(null);
-                      setShowCategories(false);
-                    }}
-                    className="px-4 py-2 text-sm text-white hover:bg-[#623645] cursor-pointer"
-                  >
-                    Ver todos
-                  </li>
-                  {categories.length === 0 ? (
-                    <li className="px-4 py-2 text-sm text-white">No hay categorías</li>
-                  ) : (
-                    categories.map((cat) => (
-                      <li
-                        key={cat.id}
-                        onClick={() => {
-                          setSelectedCategoryId(cat.id);
-                          setShowCategories(false);
-                        }}
-                        className="px-4 py-2 text-sm text-white hover:bg-[#623645] cursor-pointer"
-                      >
-                        {cat.name}
-                      </li>
-                    ))
-                  )}
-                </ul>
-              )}
-            </div>
+            <a
+              href="/categories"
+              className="text-white hover:text-[#623645] font-semibold"
+            >
+              Categorías
+            </a>
           )}
         </div>
       </nav>

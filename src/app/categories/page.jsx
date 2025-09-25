@@ -15,7 +15,9 @@ export default function CategoriesPage() {
     setLoading(false);
   }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load();
+  }, []);
 
   async function createCategory(e) {
     e.preventDefault();
@@ -35,18 +37,42 @@ export default function CategoriesPage() {
     }
   }
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      window.location.href = "/";
+    }
+  };
+
   return (
-    <div className="min-h-screen w-full flex justify-center items-start bg-[#b37c8e]">
+    <div className="min-h-screen w-full bg-[#b37c8e] flex flex-col items-center">
+      {/* Navbar */}
+      <nav className="w-full bg-[#d9a5b2] shadow-lg py-4 px-6 flex items-center justify-between">
+        <h1 className="text-white text-2xl font-bold">ECOMMERCE CIXI ♡</h1>
+        <button
+          onClick={handleBack}
+          className="bg-[#623645] text-white rounded px-3 py-1 text-sm font-semibold shadow"
+        >
+          Volver
+        </button>
+      </nav>
 
-
-      <form className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg mt-30" onSubmit={createCategory}>
-        <h1 className="text-white font-bold text-3xl mb-3 text-center">Categorías</h1>
+      {/* Formulario */}
+      <form
+        className="w-1/4 bg-[#d9a5b2] p-4 rounded-xl shadow-lg mt-10"
+        onSubmit={createCategory}
+      >
+        <h1 className="text-white font-bold text-3xl mb-3 text-center">
+          Crear categoría
+        </h1>
 
         <input
           className="border rounded p-2 mb-2 w-full bg-[#f0cdd8] text-slate-900 placeholder-gray-500 text-sm"
           placeholder="Nombre de la categoría"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
         <button className="w-1/2 block mx-auto mt-3 bg-[#623645] text-white font-bold p-2 rounded-lg text-sm">
           Crear
