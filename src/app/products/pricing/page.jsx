@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";   // 👈 NUEVO
+import { useSession } from "next-auth/react";
 
 function CreateProductForm({ categories, onCreated }) {
   const [name, setName] = useState("");
@@ -14,7 +14,6 @@ function CreateProductForm({ categories, onCreated }) {
   const [uploadedImageUrl, setUploadedImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Maneja la selección de imagen, genera preview y sube a Cloudinary
   const handleImageChange = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -35,7 +34,7 @@ function CreateProductForm({ categories, onCreated }) {
       body: formData,
     });
     const data = await res.json();
-    setUploadedImageUrl(data.secure_url); // guardamos la URL
+    setUploadedImageUrl(data.secure_url);
   };
 
   const submit = async (e) => {
@@ -49,13 +48,14 @@ function CreateProductForm({ categories, onCreated }) {
         price: price === "" ? null : Number(price),
         stock: stock === "" ? 0 : Number(stock),
         categoryId: categoryId !== "" ? Number(categoryId) : null,
-        image: uploadedImageUrl, // ✅ enviamos la URL subida
+        image: uploadedImageUrl,
       };
       console.log("Body a enviar:", body);
 
       await fetch("/api/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(body),
       });
 
@@ -77,7 +77,7 @@ function CreateProductForm({ categories, onCreated }) {
 
   return (
     <form onSubmit={submit} className="rounded-xl border border-[#dac2b2] bg-[#f0cdd8] p-4 shadow space-y-3">
-      <h3 className="text-[#623645] font-semibold text-lg">Crear producto</h3>
+      <h3 className="text-[#623645] font-semibold text-lg">Productos</h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <input
@@ -114,7 +114,6 @@ function CreateProductForm({ categories, onCreated }) {
           className="rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
         />
 
-        {/* Input para imagen */}
         <input
           type="file"
           accept="image/*"
@@ -122,7 +121,6 @@ function CreateProductForm({ categories, onCreated }) {
           className="w-full rounded-md border border-[#dac2b2] bg-[#f0cdd8] text-[#623645] text-xs px-2 py-1 shadow"
         />
 
-        {/* Vista previa */}
         {imagePreview && (
           <img
             src={imagePreview}
@@ -151,7 +149,7 @@ function CreateProductForm({ categories, onCreated }) {
   );
 }
 
-function ProductRow({ p, onChanged, isAdmin  }) {
+function ProductRow({ p, onChanged, isAdmin }) {
   const [price, setPrice] = useState(p.price ?? 0);
   const [stock, setStock] = useState(p.stock ?? 0);
   const [loading, setLoading] = useState(false);
@@ -184,7 +182,6 @@ function ProductRow({ p, onChanged, isAdmin  }) {
   return (
     <li className="rounded-xl border border-[#dac2b2] bg-[#f0cdd8] p-4 flex flex-col md:flex-row justify-between shadow text-slate-900">
       <div className="flex-1 space-y-1">
-        {/* Imagen del producto */}
         {p.image && (
           <img
             src={p.image}
@@ -237,11 +234,17 @@ function ProductRow({ p, onChanged, isAdmin  }) {
 }
 
 export default function PricingPage() {
-  const { data: session } = useSession();      // 👈 NUEVO
-  const isAdmin = session?.user?.role === "admin"; // 👈 NUEVO
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log("Sesión frontend:", session);
+  }, [session]);
+  const isAdmin = session?.user?.role === "admin";
 
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [showCategories, setShowCategories] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   async function loadProducts() {
     const res = await fetch("/api/products", { cache: "no-store" });
@@ -255,7 +258,7 @@ export default function PricingPage() {
       const data = await res.json();
       setCategories(Array.isArray(data) ? data : []);
     } catch {
-      setCategories([]); 
+      setCategories([]);
     }
   }
 
@@ -264,32 +267,119 @@ export default function PricingPage() {
     loadCategories();
   }, []);
 
+  // Filtrar productos por categoría si se ha seleccionado alguna
+  const filteredProducts = selectedCategoryId
+    ? products.filter((p) => p.categoryId === selectedCategoryId)
+    : products;
+
   return (
     <div className="min-h-screen bg-[#b48696]">
       {/* Navbar */}
       <nav className="bg-[#d9a5b2] shadow-lg py-4 px-6 flex justify-between items-center">
         <h1 className="text-white text-2xl font-bold">ECOMMERCE CIXI ♡</h1>
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           <a href="/" className="text-white hover:text-[#623645] font-semibold">Home</a>
-          <a href="/products/pricing" className="text-white hover:text-[#623645] font-semibold">Productos / Pricing</a>
+          <a href="/products/pricing" className="text-white hover:text-[#623645] font-semibold">Productos</a>
+
+          {/* Botón Categorías solo para admin en navbar */}
+          {isAdmin && (
+            <div className="relative">
+              <button
+                onClick={() => setShowCategories(!showCategories)}
+                className="text-white hover:text-[#623645] font-semibold"
+              >
+                Categorías ▾ 
+              </button>
+              {showCategories && (
+                <ul className="absolute mt-8 right-0 bg-[#d9a5b2] border border-[#623645] rounded shadow-md max-h-40 overflow-auto z-50 w-32">
+                  <li
+                    onClick={() => {
+                      setSelectedCategoryId(null);
+                      setShowCategories(false);
+                    }}
+                    className="px-4 py-2 text-sm text-white hover:bg-[#623645] cursor-pointer"
+                  >
+                    Ver todos
+                  </li>
+                  {categories.length === 0 ? (
+                    <li className="px-4 py-2 text-sm text-white">No hay categorías</li>
+                  ) : (
+                    categories.map((cat) => (
+                      <li
+                        key={cat.id}
+                        onClick={() => {
+                          setSelectedCategoryId(cat.id);
+                          setShowCategories(false);
+                        }}
+                        className="px-4 py-2 text-sm text-white hover:bg-[#623645] cursor-pointer"
+                      >
+                        {cat.name}
+                      </li>
+                    ))
+                  )}
+                </ul>
+              )}
+            </div>
+          )}
         </div>
       </nav>
 
+      {/* Botón Categorías fuera del navbar */}
+      <div className="relative flex justify-end pt-10 px-25">
+        <button
+          onClick={() => setShowCategories(!showCategories)}
+          className="bg-[#623645] text-white rounded px-4 py-1 text-sm font-semibold shadow"
+        >
+          Categorías
+        </button>
+
+        {/* Desplegable categorías con posicion absoluta para no afectar layout */}
+        {showCategories && (
+          <ul className="absolute top-full mt-1 right-20 bg-[#d9a5b2] border border-[#623645] rounded shadow-md max-h-40 overflow-auto w-32 text-white z-50">
+            <li
+              onClick={() => {
+                setSelectedCategoryId(null);
+                setShowCategories(false);
+              }}
+              className={`px-4 py-1 text-center cursor-pointer hover:bg-[#623645] ${
+                selectedCategoryId === null ? "bg-[#623645]" : ""
+              }`}
+            >
+              Ver todos
+            </li>
+            {categories.length === 0 ? (
+              <li className="px-4 py-1 text-center">No hay categorías</li>
+            ) : (
+              categories.map((cat) => (
+                <li
+                  key={cat.id}
+                  onClick={() => {
+                    setSelectedCategoryId(cat.id);
+                    setShowCategories(false);
+                  }}
+                  className={`px-4 py-1 text-center cursor-pointer hover:bg-[#623645] ${
+                    selectedCategoryId === cat.id ? "bg-[#623645]" : ""
+                  }`}
+                >
+                  {cat.name}
+                </li>
+              ))
+            )}
+          </ul>
+        )}
+      </div>
+
       <div className="flex justify-center pt-10 px-4">
         <div className="w-3/5 space-y-6">
-          <h2 className="text-3xl text-white font-bold text-center">Gestionar productos</h2>
+          <h2 className="text-3xl text-white font-bold text-center">Productos</h2>
 
-          {/* Formulario de creación: solo admin */}
-          {isAdmin && (
-            <CreateProductForm categories={categories} onCreated={loadProducts} />
-          )}
+          {isAdmin && <CreateProductForm categories={categories} onCreated={loadProducts} />}
 
-          {/* Lista editable */}
-          {products.length === 0 ? (
+          {filteredProducts.length === 0 ? (
             <p className="text-xs text-slate-200 text-center mt-2">No hay productos disponibles.</p>
           ) : (
             <ul className="space-y-3">
-              {products.map((p) => (
+              {filteredProducts.map((p) => (
                 <ProductRow key={p.id} p={p} onChanged={loadProducts} isAdmin={isAdmin} />
               ))}
             </ul>
