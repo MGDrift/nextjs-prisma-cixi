@@ -29,8 +29,8 @@ function CreateProductForm({ categories, onCreated }) {
     // Subida a Cloudinary
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", "products_preset"); // reemplaza con tu preset
-    const res = await fetch("https://api.cloudinary.com/v1_1/dftkpzy1p/image/upload", {
+    formData.append("upload_preset", "cixi_products"); // reemplaza con tu preset
+    const res = await fetch("https://api.cloudinary.com/v1_1/doh7f2dbo/image/upload", {
       method: "POST",
       body: formData,
     });
