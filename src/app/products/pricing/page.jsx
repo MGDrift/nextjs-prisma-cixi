@@ -51,6 +51,7 @@ function CreateProductForm({ categories, onCreated }) {
         categoryId: categoryId !== "" ? Number(categoryId) : null,
         image: uploadedImageUrl, // ✅ enviamos la URL subida
       };
+      console.log("Body a enviar:", body);
 
       await fetch("/api/products", {
         method: "POST",

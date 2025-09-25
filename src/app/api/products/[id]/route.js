@@ -4,7 +4,7 @@ const prisma = new PrismaClient()
 
 export async function PATCH(req, { params }) {
   try {
-    const { id } = params
+    const { id } = await params
     const { price, stock } = await req.json()
 
     const data = {}

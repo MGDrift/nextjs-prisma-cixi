@@ -26,28 +26,65 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    // ✅ Obtener sesión y verificar rol
     const session = await getServerSession(authOptions);
-
     if (!session || session.user.role !== 'admin') {
-      return NextResponse.json({ error: 'No tienes permisos' }, { status: 403 });
+      return NextResponse.json(
+        { error: 'No tienes permisos para crear productos' },
+        { status: 403 }
+      );
     }
 
+    // ✅ Leer datos del body
     const { name, price, categoryId, description, stock, image } = await req.json();
 
-    const product = await prisma.product.create({
-      data: {
-        name: name.trim(),
-        description: description?.trim() || null,
-        price: price ?? null,
-        stock: stock ?? 0,
-        categoryId: categoryId ?? null,
-        image: image ?? null, // ✅ aquí va la URL enviada desde frontend
-      },
-    });
+    if (!name?.trim()) {
+      return NextResponse.json({ error: 'Nombre requerido' }, { status: 400 });
+    }
 
-    return NextResponse.json(product, { status: 201 });
+    // ✅ Crear objeto con los campos a guardar
+    const data = { name: name.trim() };
+
+    if (price !== undefined && price !== null && String(price) !== "") {
+      const numeric = Number(price)
+      if (Number.isNaN(numeric)) {
+        return NextResponse.json({ error: 'Precio inválido' }, { status: 400 })
+      }
+      data.price = numeric
+    }
+
+    if (description !== undefined && description !== null && description.trim() !== "") {
+      data.description = description.trim()
+    }
+
+    if (categoryId) {
+      const idNum = Number(categoryId)
+      const exists = await prisma.category.findUnique({ where: { id: idNum } })
+      if (!exists) {
+        return NextResponse.json({ error: 'Categoría no existe' }, { status: 400 })
+      }
+      data.categoryId = idNum
+    }
+
+    if (stock !== undefined && stock !== null && String(stock) !== "") {
+      const numericStock = Number(stock)
+      if (!Number.isNaN(numericStock) && numericStock >= 0) {
+        data.stock = numericStock
+      }
+    }
+
+    // ✅ Guardar URL de la imagen si viene del frontend
+    if (image && image.trim() !== "") {
+      data.image = image.trim();
+    }
+
+    // ✅ Crear producto en la DB usando 'data'
+    const product = await prisma.product.create({ data });
+
+    return NextResponse.json(product, { status: 201 })
+
   } catch (e) {
-    console.error(e);
-    return NextResponse.json({ error: 'Error creando producto' }, { status: 500 });
+    console.error(e)
+    return NextResponse.json({ error: 'Error creando producto' }, { status: 500 })
   }
 }
