@@ -71,3 +71,36 @@ export function clearCart() {
   saveCart([]);
   return [];
 }
+
+export function addKitToCart(kit) {
+  const cart = getCart();
+
+  const lineId = `kit-${kit.id}`;
+  const total = (Array.isArray(kit.items) ? kit.items : []).reduce((acc, it) => {
+    const price = Number(it?.product?.price || 0);
+    const qty = Number(it?.quantity || 0);
+    return acc + price * qty;
+  }, 0);
+
+  const idx = cart.findIndex((x) => x.id === lineId);
+  if (idx > -1) {
+    cart[idx].qty += 1;
+  } else {
+    cart.push({
+      id: lineId,
+      type: "kit",
+      name: `Kit: ${kit.name}`,
+      price: total,  
+      qty: 1,
+      detail: kit.items?.map((it) => ({
+        productId: it.productId,
+        name: it.product?.name,
+        unitPrice: it.product?.price,
+        quantity: it.quantity,
+      })) || [],
+    });
+  }
+
+  saveCart(cart);
+  return { ok: true };
+}
