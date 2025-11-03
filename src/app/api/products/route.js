@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import { NextResponse } from 'next/server'
-import { getServerSession } from "next-auth/next"
+import { getServerSession } from "next-auth"
 import { authOptions } from '../auth/[...nextauth]/route'
 
 const prisma = new PrismaClient()
@@ -28,12 +28,17 @@ export async function POST(req) {
   try {
     // ✅ Obtener sesión y verificar rol
     const session = await getServerSession(authOptions);
-    if (!session ) {
+    console.log(">>> /api/products POST hit");
+    console.log("SESSION @createProduct:", session?.user);
+
+
+      if (!session ) {
       return NextResponse.json(
         { error: 'No tienes permisos para crear productos' },
         { status: 403 }
       );
     }
+   
 
     // ✅ Leer datos del body
     const { name, price, categoryId, description, stock, image } = await req.json();
